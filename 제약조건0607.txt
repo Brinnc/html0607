@@ -1,0 +1,143 @@
+SQL> --constraint
+SQL> --결점이 없는 유효한 데이터 입력을 보장받기 위해 테이블에 적용하는 제한사항을 제약조건이라고 함
+SQL> --ANSI(미국표준협회)이:표준 을 ): 표준SQL, 제약조건
+SQL> --null을 허용하지않음: not null
+SQL> --중복을 허용하지 않음: unique
+SQL> --기본값지정 default
+SQL> --지정한 조건만 받아들이는 제약조건: check
+SQL> --unique+not null=primary key !!중요!!
+SQL> --foreign key 외래키 제약조건
+SQL> --var[variable]char[charecter](용량):변경가능한 문자자료형
+SQL> --각종 제약조건을 부여하여 테이블 생성하기
+SQL> --현재계정에서 어떤 테이블을 생성했었는지 테이블 목록 조회
+SQL> select table_name from user_tables;
+
+TABLE_NAME                                                                      
+------------------------------------------------------------                    
+PET                                                                             
+MEMBER                                                                          
+DEPT                                                                            
+EMP                                                                             
+CLASS                                                                           
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  create table member2(
+  2  	name varchar2(20) not null
+  3  	, id varchar2(20) unique
+  4  	, regdate date default sysdate
+  5  	, point number default 500
+  6* )
+SQL> /
+
+Table created.
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1* insert into member2(name, id) values ('ALLEN', 'allen0001')
+SQL> /
+
+1 row created.
+
+SQL> set line 400
+SQL> set pagesize 30
+SQL> select * from member2;
+
+NAME                                     ID                                       REGDATE       POINT                                                                                                                                                                                                                                                                                                           
+---------------------------------------- ---------------------------------------- -------- ----------                                                                                                                                                                                                                                                                                                           
+ALLEN                                    allen0001                                23/06/07        500                                                                                                                                                                                                                                                                                                           
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1* insert into member2(name, id) values ('ALLEN', 'allen0001')
+SQL> /
+insert into member2(name, id) values ('ALLEN', 'allen0001')
+*
+ERROR at line 1:
+ORA-00001: unique constraint (JAVA.SYS_C007022) violated 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1* insert into member2(name, id) values ('ALLEN')
+SQL> /
+insert into member2(name, id) values ('ALLEN')
+                              *
+ERROR at line 1:
+ORA-00947: not enough values 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1* insert into member2(name) values ('ALLEN')
+SQL> /
+
+1 row created.
+
+SQL> select * from member2;
+
+NAME                                     ID                                       REGDATE       POINT                                                                                                                                                                                                                                                                                                           
+---------------------------------------- ---------------------------------------- -------- ----------                                                                                                                                                                                                                                                                                                           
+ALLEN                                    allen0001                                23/06/07        500                                                                                                                                                                                                                                                                                                           
+ALLEN                                                                             23/06/07        500                                                                                                                                                                                                                                                                                                           
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1* insert into member2(name) values ('ALLEN')
+SQL> /
+
+1 row created.
+
+SQL> select * from member2;
+
+NAME                                     ID                                       REGDATE       POINT                                                                                                                                                                                                                                                                                                           
+---------------------------------------- ---------------------------------------- -------- ----------                                                                                                                                                                                                                                                                                                           
+ALLEN                                    allen0001                                23/06/07        500                                                                                                                                                                                                                                                                                                           
+ALLEN                                                                             23/06/07        500                                                                                                                                                                                                                                                                                                           
+ALLEN                                                                             23/06/07        500                                                                                                                                                                                                                                                                                                           
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  create table member3(
+  2  	id varchar2(20) primary key
+  3  	, name varchar2(20)
+  4* )
+SQL> /
+
+Table created.
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1* insert into member3(id, name) values('allen0001', 'ALLEN')
+SQL> /
+
+1 row created.
+
+SQL> /
+insert into member3(id, name) values('allen0001', 'ALLEN')
+*
+ERROR at line 1:
+ORA-00001: unique constraint (JAVA.SYS_C007023) violated 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1* insert into member3(name) values('ALLEN')
+SQL> /
+insert into member3(name) values('ALLEN')
+*
+ERROR at line 1:
+ORA-01400: cannot insert NULL into ("JAVA"."MEMBER3"."ID") 
+
+
+SQL> --primary key: 데이터의 중복과 null을 둘다 허용하지 않음으로써 데이터의 무결성을 더 확고히함
+SQL> spool off
